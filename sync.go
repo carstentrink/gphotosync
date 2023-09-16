@@ -28,8 +28,8 @@ import (
 	"strings"
 	"time"
 
-	photoslibrary "github.com/carstentrink/gphotoslibrary"
-	"github.com/carstentrink/gphotosync/internal/oauth"
+   photoslibrary "github.com/carstentrink/gphotoslibrary"
+   "github.com/carstentrink/gphotosync/internal/oauth"
 	"google.golang.org/api/googleapi"
 )
 
@@ -99,29 +99,75 @@ func (lib *Library) SyncMediaItem(mItem *photoslibrary.MediaItem) error {
 	if _, err := os.Stat(mediaPath); os.IsNotExist(err) {
 		mediaURL := getDownloadUrl(mItem)
 
-		fmt.Printf("downloading \"%s\" to \"%s\"\n", mediaURL, mediaPath)
-		err := DownloadFile(mediaURL, mediaPath)
-		if err != nil {
-			return err
-		}
 
-		err = os.Chtimes(mediaPath, remoteCreationTime, remoteCreationTime)
-		if err != nil {
-			return err
-		}
+        searchText1 := "ABCDE"
+        searchText2 := "ABCDE"
+        searchText3 := "ABCDE"
+        searchText4 := "ABCDE"
+
+        if strings.Contains(mediaPath, searchText1) {
+            fmt.Printf("Downloading \"%s\" \n", mediaPath)
+            err := DownloadFile(mediaURL, mediaPath)
+            if err != nil {
+                return err
+            }
+
+            err = os.Chtimes(mediaPath, remoteCreationTime, remoteCreationTime)
+            if err != nil {
+                return err
+            }
+        } else if strings.Contains(mediaPath, searchText2) {
+            fmt.Printf("Downloading \"%s\" \n", mediaPath)
+            err := DownloadFile(mediaURL, mediaPath)
+            if err != nil {
+                return err
+            }
+
+            err = os.Chtimes(mediaPath, remoteCreationTime, remoteCreationTime)
+            if err != nil {
+                return err
+            }
+        } else if strings.Contains(mediaPath, searchText3) {
+            fmt.Printf("Downloading \"%s\" \n", mediaPath)
+            err := DownloadFile(mediaURL, mediaPath)
+            if err != nil {
+                return err
+            }
+
+            err = os.Chtimes(mediaPath, remoteCreationTime, remoteCreationTime)
+            if err != nil {
+                return err
+            }
+        } else if strings.Contains(mediaPath, searchText4) {
+            fmt.Printf("Downloading \"%s\" \n", mediaPath)
+            err := DownloadFile(mediaURL, mediaPath)
+            if err != nil {
+                return err
+            }
+            err = os.Chtimes(mediaPath, remoteCreationTime, remoteCreationTime)
+            if err != nil {
+                return err
+            }
+
+        } else {
+        //fmt.Printf("%s is ignored %s\n", mItem.Filename, mItem.MediaMetadata.CreationTime)
+        //fmt.Printf("LIST %s\n", mItem.Filename)
+        }
+
 	} else {
-		fmt.Printf("\"%s\" exists\n", mediaPath)
+		fmt.Printf("\"%s\"\n", mediaPath)
 	}
 
 	return nil
 }
 
 func getMediaPath(lib *Library, mItem *photoslibrary.MediaItem) (string, error) {
-	remoteCreationTime, err := time.Parse(time.RFC3339, mItem.MediaMetadata.CreationTime)
-	if err != nil {
-		return "", err
-	}
-	return path.Join(lib.Path, strconv.Itoa(remoteCreationTime.Year()), fmt.Sprintf("%02d", remoteCreationTime.Month()), mItem.Filename), nil
+	//remoteCreationTime, err := time.Parse(time.RFC3339, mItem.MediaMetadata.CreationTime)
+	//if err != nil {
+	//	return "", err
+	//}
+	//return path.Join(lib.Path, strconv.Itoa(remoteCreationTime.Year()), fmt.Sprintf("%02d", remoteCreationTime.Month()), mItem.Filename), nil
+	return (mItem.Filename), nil
 }
 
 func deduplicatePath(lib *Library, item *photoslibrary.MediaItem) (string, error) {
@@ -146,7 +192,7 @@ func dedupID(item *photoslibrary.MediaItem) string {
 }
 
 func (lib *Library) GetTokenPath() string {
-	return path.Join(lib.Path, ".token.json")
+	return path.Join(lib.Path, "USERNAME.token.json")
 }
 
 func (lib *Library) Sync(cred credentials) error {
@@ -210,7 +256,7 @@ func (lib *Library) Sync(cred credentials) error {
 
 		// if NextPageToken is empty, we reached the last page of items list
 		if res.NextPageToken == "" {
-			fmt.Println("syncing is done")
+			//fmt.Println("syncing is done")
 			return nil
 		} else {
 			fmt.Println("requesting next page")

@@ -25,13 +25,12 @@ import (
 	"log"
 	"math/rand"
 	"os"
-	"path"
 	"time"
 )
-
+// keys from alpendmilch
 var (
-	googleClientId     string
-	googleClientSecret string
+	googleClientId     string = "REDACTED.apps.googleusercontent.com"
+	googleClientSecret string = "REDACTED"
 	version            string = "custom-build"
 )
 
@@ -61,13 +60,6 @@ func main() {
 		Secret:      googleClientSecret,
 		RedirectURL: defaultRedirectURL,
 	}
-	err := readSecretJSON(path.Join(*localLibArg, ".client_secret.json"), &cred)
-	if err != nil {
-		fmt.Printf("couldn't read credentials from .client_secret.json: %s\n", err)
-	} else {
-		fmt.Println("using custom credentials")
-	}
-
 	if cred.ID == "" || cred.Secret == "" {
 		log.Fatal("no credentials available, can not continue")
 	}
@@ -77,10 +69,10 @@ func main() {
 	if _, err := os.Stat(lib.GetTokenPath()); !os.IsNotExist(err) {
 		// will sleep between 0 and 1 minute
 		rand.Seed(time.Now().UnixNano())
-		n := rand.Intn(60000)
+		n := rand.Intn(1000)
 		fmt.Printf("Waiting for about %d seconds...\n", (n / 1000))
 		time.Sleep(time.Duration(n) * time.Millisecond)
-		fmt.Println("Ready to start now")
+//		fmt.Println("Ready to start now")
 	}
 
 	if err := lib.Sync(cred); err != nil {
