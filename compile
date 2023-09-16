@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#rm $HOME/gopath
+go clean -modcache
+go mod tidy
+
 rm -f gphotosync
 export GOOS=linux
 export GOARCH=amd64
