@@ -30,7 +30,7 @@ import (
 
    photoslibrary "github.com/carstentrink/gphotoslibrary"
    "github.com/carstentrink/gphotosync/internal/oauth"
-	"google.golang.org/api/googleapi"
+   "google.golang.org/api/googleapi"
 )
 
 type Library struct {
@@ -72,6 +72,11 @@ func getDownloadUrl(mediaItem *photoslibrary.MediaItem) string {
 
 }
 
+func (lib *Library) GetTokenPath() string {
+	return path.Join(lib.Path, "USERNAME.token.json")
+}
+
+
 func (lib *Library) SyncMediaItem(mItem *photoslibrary.MediaItem) error {
 	remoteCreationTime, err := time.Parse(time.RFC3339, mItem.MediaMetadata.CreationTime)
 	if err != nil {
@@ -90,7 +95,7 @@ func (lib *Library) SyncMediaItem(mItem *photoslibrary.MediaItem) error {
 	// multiple items with same filename can exist in remote
 	// we try to mitigate it by adding timestamp to local filename
 	if stat, err := os.Stat(mediaPath); !os.IsNotExist(err) && stat.ModTime().UnixNano() != remoteCreationTime.UnixNano() {
-		mediaPath, err = deduplicatePath(lib, mItem)
+//		mediaPath, err = deduplicatePath(lib, mItem)
 		if err != nil {
 			return err
 		}
@@ -104,6 +109,26 @@ func (lib *Library) SyncMediaItem(mItem *photoslibrary.MediaItem) error {
         searchText2 := "ABCDE"
         searchText3 := "ABCDE"
         searchText4 := "ABCDE"
+        searchText5 := "ABCDE"
+        searchText6 := "ABCDE"
+        searchText7 := "ABCDE"
+        searchText8 := "ABCDE"
+        searchText9 := "ABCDE"
+//  current_time := time.Now().Local()
+//  fmt.Println("The Current time is ", time.Now().Local().Unix().Format("2006-01-02"))
+//  fmt.Println("File time is ", remoteCreationTime.Format("2006-01-02"))
+//  timestamp_now := time.Now().Local().Unix()
+//  filetimestamp := remoteCreationTime.Unix()
+//  fmt.Printf("unix NOW \"%d\" but file is \"%d\" \n", timestamp_now,filetimestamp)
+//  diff := timestamp_now - filetimestamp
+//  if diff > 10 {
+//  if diff > 99999999259200 {
+//  fmt.Printf("checking if newer than 48 hours \"%d\" \n", diff)
+
+
+//  fmt.Println("Unix %s---- ", timestamp)
+//        t2 := t.Add(time.Minute * 3600)
+//        fmt.Printf("CURRENT %s  \n", start)
 
         if strings.Contains(mediaPath, searchText1) {
             fmt.Printf("Downloading \"%s\" \n", mediaPath)
@@ -144,16 +169,70 @@ func (lib *Library) SyncMediaItem(mItem *photoslibrary.MediaItem) error {
             if err != nil {
                 return err
             }
+
             err = os.Chtimes(mediaPath, remoteCreationTime, remoteCreationTime)
             if err != nil {
                 return err
             }
+        } else if strings.Contains(mediaPath, searchText5) {
+            fmt.Printf("Downloading \"%s\" \n", mediaPath)
+            err := DownloadFile(mediaURL, mediaPath)
+            if err != nil {
+                return err
+            }
+            err = os.Chtimes(mediaPath, remoteCreationTime, remoteCreationTime)
+            if err != nil {
+                return err
+            }
+        } else if strings.Contains(mediaPath, searchText6) {
+            fmt.Printf("Downloading \"%s\" \n", mediaPath)
+            err := DownloadFile(mediaURL, mediaPath)
+            if err != nil {
+                return err
+            }
 
+            err = os.Chtimes(mediaPath, remoteCreationTime, remoteCreationTime)
+            if err != nil {
+                return err
+            }
+        } else if strings.Contains(mediaPath, searchText7) {
+            fmt.Printf("Downloading \"%s\" \n", mediaPath)
+            err := DownloadFile(mediaURL, mediaPath)
+            if err != nil {
+                return err
+            }
+
+            err = os.Chtimes(mediaPath, remoteCreationTime, remoteCreationTime)
+            if err != nil {
+                return err
+            }
+        } else if strings.Contains(mediaPath, searchText8) {
+            fmt.Printf("Downloading \"%s\" \n", mediaPath)
+            err := DownloadFile(mediaURL, mediaPath)
+            if err != nil {
+                return err
+            }
+
+            err = os.Chtimes(mediaPath, remoteCreationTime, remoteCreationTime)
+            if err != nil {
+                return err
+            }
+        } else if strings.Contains(mediaPath, searchText9) {
+            fmt.Printf("Downloading \"%s\" \n", mediaPath)
+            err := DownloadFile(mediaURL, mediaPath)
+            if err != nil {
+                return err
+            }
+
+            err = os.Chtimes(mediaPath, remoteCreationTime, remoteCreationTime)
+            if err != nil {
+                return err
+            }
         } else {
         //fmt.Printf("%s is ignored %s\n", mItem.Filename, mItem.MediaMetadata.CreationTime)
         //fmt.Printf("LIST %s\n", mItem.Filename)
         }
-
+//	}
 	} else {
 		fmt.Printf("\"%s\"\n", mediaPath)
 	}
@@ -170,14 +249,14 @@ func getMediaPath(lib *Library, mItem *photoslibrary.MediaItem) (string, error) 
 	return (mItem.Filename), nil
 }
 
-func deduplicatePath(lib *Library, item *photoslibrary.MediaItem) (string, error) {
-	p, err := getMediaPath(lib, item)
-	if err != nil {
-		return "", err
-	}
-	e := path.Ext(p)
-	return strings.TrimSuffix(p, e) + "-gphotosync-" + lib.Deduplicator(item) + e, nil
-}
+//func deduplicatePath(lib *Library, item *photoslibrary.MediaItem) (string, error) {
+//	p, err := getMediaPath(lib, item)
+//	if err != nil {
+//		return "", err
+//	}
+//	e := path.Ext(p)
+//	return strings.TrimSuffix(p, e) + "-gphotosync-" + lib.Deduplicator(item) + e, nil
+//}
 
 func dedupUnixHex(item *photoslibrary.MediaItem) string {
 	remoteCreationTime, err := time.Parse(time.RFC3339, item.MediaMetadata.CreationTime)
@@ -189,10 +268,6 @@ func dedupUnixHex(item *photoslibrary.MediaItem) string {
 
 func dedupID(item *photoslibrary.MediaItem) string {
 	return item.Id
-}
-
-func (lib *Library) GetTokenPath() string {
-	return path.Join(lib.Path, "USERNAME.token.json")
 }
 
 func (lib *Library) Sync(cred credentials) error {
